@@ -1,7 +1,7 @@
 
 #include "cuSORT.cuh"
 
-__device__ void merge(int* data, int start, int mid, int end, int* result) {
+__device__ void merge(float* data, int start, int mid, int end, float* result) {
     int i = start, j = mid + 1, k = start;
     while (i <= mid && j <= end) {
         if (data[i] <= data[j]) {
@@ -22,18 +22,21 @@ __device__ void merge(int* data, int start, int mid, int end, int* result) {
     }
 }
 
-__global__ void mergeSortKernel(int* data, int* result, int n) {
+__global__ void mergeSortKernel(float* data, float* result, int n) {
     int index = threadIdx.x + blockIdx.x * blockDim.x;
     int current_size = 2;
-    int start, mid, end;
-    while (current_size <= n) {
+    int total_width = 1;
+
+    while (total_width < n) {
         if (index % current_size == 0) {
-            start = index;
-            mid = min(start + current_size / 2 - 1, n - 1);
-            end = min(start + current_size - 1, n - 1);
+            int start = index;
+            int mid = min(start + current_size / 2 - 1, n - 1);
+            int end = min(start + current_size - 1, n - 1);
             merge(data, start, mid, end, result);
         }
-        __syncthreads(); // Synchronize threads
+
+        __syncthreads();
+        total_width *= 2;
         current_size *= 2;
     }
 }

@@ -20,9 +20,9 @@ __device__ int partition(int* data, int left, int right) {
 
 __global__ void quickSortKernel(int* data, int left, int right) {
     if (left < right) {
+#ifdef USE_DYNAMIC_PARALLELISM
         int pi = partition(data, left, right);
 
-#ifdef USE_DYNAMIC_PARALLELISM
         if (left < pi - 1)
             quickSortKernel << <1, 1 >> > (data, left, pi - 1);
 
