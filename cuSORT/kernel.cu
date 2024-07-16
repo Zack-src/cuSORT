@@ -34,7 +34,7 @@ int main()
 
     cudaMemcpy(array, d_array, n * sizeof(float), cudaMemcpyDeviceToHost);
     for (int i = 0; i < n; ++i) {
-        std::cout << array[i] << (array[i] > array[i-1] ? "\n" : "| superior\n");
+        std::cout << array[i] << (array[i] >= array[i-1] ? "\n" : "| superior\n");
     }
     std::cout << std::endl;
 
